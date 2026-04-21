@@ -3,83 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulasi Peraturan Robotik</title>
+    <title>Simulasi Peraturan RBC STEM 2026</title>
     <style>
-        body { font-family: Arial, sans-serif; display: flex; gap: 20px; padding: 20px; background-color: #f4f4f9; }
-        .controls { width: 300px; display: flex; flex-direction: column; gap: 10px; }
-        button { padding: 15px; font-size: 16px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
-        button:hover { background-color: #0056b3; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; gap: 30px; padding: 20px; background-color: #f0f2f5; margin: 0; }
         
-        /* Gelanggang */
-        .arena-container { position: relative; width: 400px; height: 400px; background-color: #333; border: 5px solid #000; border-radius: 50%; /* Anggap gelanggang bulat sbg contoh */ overflow: visible; display: flex; justify-content: center; align-items: center;}
-        .arena-border { width: 100%; height: 100%; border: 10px solid white; border-radius: 50%; box-sizing: border-box; }
+        /* Panel Kawalan */
+        .controls { width: 350px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto; }
+        h2 { text-align: center; color: #333; font-size: 20px; }
+        .section-title { font-weight: bold; margin-top: 15px; color: #d9534f; border-bottom: 2px solid #eee; padding-bottom: 5px;}
+        .section-title.draw { color: #f0ad4e; }
+        button { width: 100%; padding: 10px; margin-top: 8px; font-size: 13px; cursor: pointer; background-color: #0275d8; color: white; border: none; border-radius: 5px; text-align: left; line-height: 1.4; transition: 0.2s; }
+        button:hover { background-color: #025aa5; }
+        button.reset-btn { background-color: #5cb85c; text-align: center; font-weight: bold; margin-top: 20px; }
+        button.reset-btn:hover { background-color: #4cae4c; }
+
+        /* Kawasan Arena */
+        .arena-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; }
+        #status-board { background: #fff; padding: 15px 30px; border-radius: 8px; font-size: 20px; font-weight: bold; margin-bottom: 20px; min-width: 400px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 2px solid #ddd; min-height: 30px; }
         
-        /* Robot & Menara */
-        .robot, .menara { position: absolute; width: 40px; height: 40px; transition: all 1.5s ease-in-out; /* Ini buat animasi nampak smooth */ display: flex; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 12px;}
-        #robotA { background-color: blue; top: 180px; left: 100px; }
-        #robotB { background-color: red; top: 180px; left: 260px; }
-        #menaraA { background-color: lightblue; top: 50px; left: 180px; border-radius: 50%; width: 30px; height:30px;}
-        #menaraB { background-color: pink; top: 320px; left: 180px; border-radius: 50%; width: 30px; height:30px;}
+        /* Gelanggang (Reka Bentuk Berdasarkan Gambar) */
+        .arena { position: relative; width: 500px; height: 500px; background-color: white; border: 6px solid #222; border-radius: 50%; box-shadow: 0 10px 20px rgba(0,0,0,0.2); overflow: hidden; }
         
-        #result-text { position: absolute; top: -50px; font-size: 24px; font-weight: bold; color: green; display: none; }
+        /* Logo Tengah */
+        .logo { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; opacity: 0.8; z-index: 1; }
+        .logo h1 { margin: 0; font-size: 36px; color: #333; font-style: italic; font-weight: 900; letter-spacing: -1px; line-height: 1; text-shadow: 2px 2px 0px #ddd; }
+        .logo p { margin: 0; font-size: 12px; font-weight: bold; color: #555; }
+
+        /* Kotak Mula (START) */
+        .start-box { position: absolute; width: 60px; height: 100px; border: 2px solid #444; background: #f9f9f9; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; letter-spacing: 2px; color: #666; z-index: 2; writing-mode: vertical-rl; transform: rotate(180deg); }
+        .start-left { left: 20px; top: 200px; }
+        .start-right { right: 20px; top: 200px; }
+
+        /* Bulatan A, B, C, D */
+        .circle-point { position: absolute; width: 40px; height: 40px; border: 2px solid #333; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 18px; color: #333; background: white; z-index: 2; }
+        .circle-a { left: 80px; top: 80px; }
+        .circle-b { left: 80px; bottom: 80px; }
+        .circle-c { right: 80px; top: 80px; }
+        .circle-d { right: 80px; bottom: 80px; }
+
+        /* Objek (Robot & Menara) */
+        .robot { position: absolute; width: 40px; height: 40px; border-radius: 5px; box-shadow: inset 0 0 5px rgba(0,0,0,0.5), 0 3px 5px rgba(0,0,0,0.3); transition: all 1.2s ease-in-out; z-index: 10; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px; }
+        .tower { position: absolute; width: 20px; height: 20px; border-radius: 50%; box-shadow: 0 3px 5px rgba(0,0,0,0.3); transition: all 1.2s ease-in-out; z-index: 9; border: 2px solid white; }
+        
+        #robotMerah { background: linear-gradient(135deg, #ff4e50, #f9d423); }
+        #robotBiru { background: linear-gradient(135deg, #00c6ff, #0072ff); }
+        
+        /* Warna Kon */
+        #towerKiri { background-color: #ff8c00; } /* Kon Oren */
+        #towerKanan { background-color: #800080; } /* Kon Ungu */
+
     </style>
 </head>
 <body>
 
     <div class="controls">
-        <h2>Peraturan RBC</h2>
-        <p>Pilih situasi untuk lihat simulasi:</p>
-        <button onclick="simulasiMenangTolak()">5.7.1 - Tolak Robot Keluar</button>
-        <button onclick="simulasiSeri()">5.8.1 - 10 Saat Tidak Bergerak</button>
-        <button onclick="resetArena()" style="background-color: gray;">Reset Gelanggang</button>
+        <h2>Simulasi Peraturan</h2>
+        <button class="reset-btn" onclick="resetArena()">🔄 RESET GELANGGANG</button>
+        
+        <div class="section-title">Syarat MENANG</div>
+        <button onclick="menang1()">1. Robot keluar, lawan jatuhkan menara</button>
+        <button onclick="menang2()">2. Robot pegun 10s, lawan menang</button>
+        <button onclick="menang3()">3. Jatuh bersama menara lawan, baki robot jatuhkan baki menara</button>
+        <button onclick="menang4()">4. Jatuh menara serentak, robot tolak robot lawan</button>
+
+        <div class="section-title draw">Syarat SERI</div>
+        <button onclick="seri1()">1. Kedua-dua robot pegun 10s</button>
+        <button onclick="seri2()">2. Kedua-dua robot jatuh, menara kekal</button>
+        <button onclick="seri3()">3. Masa tamat, semua kekal</button>
+        <button onclick="seri4()">4. Robot & menara jatuh serentak (Gelanggang Kosong)</button>
+        <button onclick="seri5()">5. Lawan jatuh bawa menara, robot baki gagal jatuhkan menara kerana masa/rosak</button>
     </div>
 
-    <div class="arena-container">
-        <div class="arena-border"></div>
-        <div id="result-text"></div>
-        <div id="robotA" class="robot">A</div>
-        <div id="robotB" class="robot">B</div>
-        <div id="menaraA" class="menara">MA</div>
-        <div id="menaraB" class="menara">MB</div>
+    <div class="arena-wrapper">
+        <div id="status-board">Sedia untuk Mula!</div>
+        <div class="arena">
+            <div class="logo">
+                <h1>STEM</h1>
+                <p>NEGERI SELANGOR 2026</p>
+            </div>
+            <div class="start-box start-left">START</div>
+            <div class="start-box start-right">START</div>
+            <div class="circle-point circle-a">A</div>
+            <div class="circle-point circle-b">B</div>
+            <div class="circle-point circle-c">C</div>
+            <div class="circle-point circle-d">D</div>
+
+            <div id="robotMerah" class="robot">M</div>
+            <div id="robotBiru" class="robot">B</div>
+            <div id="towerKiri" class="tower"></div>
+            <div id="towerKanan" class="tower"></div>
+        </div>
     </div>
 
     <script>
-        const robotA = document.getElementById('robotA');
-        const robotB = document.getElementById('robotB');
-        const resultText = document.getElementById('result-text');
+        const rM = document.getElementById('robotMerah');
+        const rB = document.getElementById('robotBiru');
+        const tK = document.getElementById('towerKiri');
+        const tKn = document.getElementById('towerKanan');
+        const statusBoard = document.getElementById('status-board');
 
+        // Fungsi pembantu untuk set posisi
+        function setPos(el, left, top) {
+            el.style.left = left + 'px';
+            el.style.top = top + 'px';
+        }
+
+        // Reset kedudukan ke asal (START dan Bulatan A & C)
         function resetArena() {
-            robotA.style.left = '100px'; robotA.style.top = '180px';
-            robotB.style.left = '260px'; robotB.style.top = '180px';
-            resultText.style.display = 'none';
-        }
-
-        function simulasiMenangTolak() {
-            resetArena();
-            // Animasi: Robot A bergerak ke arah Robot B, lalu tolak B keluar gelanggang
-            setTimeout(() => {
-                robotA.style.left = '250px'; // A maju
-                robotB.style.left = '450px'; // B tertolak keluar (melebihi 400px lebar arena)
-                
-                setTimeout(() => {
-                    resultText.innerHTML = "Robot A Menang! (Peraturan 5.7.1)";
-                    resultText.style.color = "blue";
-                    resultText.style.display = 'block';
-                }, 1500); // Tunjuk text lepas animasi tamat
-            }, 500);
-        }
-
-        function simulasiSeri() {
-            resetArena();
-            // Animasi: Tiada pergerakan, terus tunjuk masa tamat
-            resultText.innerHTML = "Masa Berjalan... 10s";
-            resultText.style.display = 'block';
-            resultText.style.color = "orange";
+            setPos(rM, 30, 230); // Dalam Start Kiri
+            setPos(rB, 430, 230); // Dalam Start Kanan
+            setPos(tK, 88, 88); // Atas A
+            setPos(tKn, 388, 88); // Atas C
             
-            setTimeout(() => {
-                resultText.innerHTML = "SERI! Kedua-dua robot pegun (Peraturan 5.8.1)";
-            }, 2000);
+            // Set semula opacity jika ada yang 'hilang' masa jatuh
+            rM.style.opacity = 1; rB.style.opacity = 1; 
+            tK.style.opacity = 1; tKn.style.opacity = 1;
+
+            updateStatus("Sedia untuk simulasi set seterusnya...", "black");
         }
+
+        function updateStatus(text, color) {
+            statusBoard.innerHTML = text;
+            statusBoard.style.color = color;
+        }
+
+        // ================= PERATURAN MENANG =================
+        function menang1() {
+            resetArena(); updateStatus("Menang 1: M menolak B, kemudian jatuhkan menara C...", "#333");
+            setTimeout(() => { setPos(rM, 230, 230); setPos(rB, 270, 230); }, 500); // Bertembung tengah
+            setTimeout(() => { setPos(rM, 380, 230); setPos(rB, 520, 230); }, 2000); // Tolak B keluar
+            setTimeout(() => { setPos(rM, 388, 120); }, 3500); // M pergi ke menara C
+            setTimeout(() => { setPos(rM, 388, 40); setPos(tKn, 388, -30); }, 5000); // Tolak menara keluar
+            setTimeout(() => { updateStatus("MERAH MENANG! (Robot lawan keluar & menara jatuh)", "green"); }, 6500);
+        }
+
+        function menang2() {
+            resetArena(); updateStatus("Menang 2: Robot Biru rosak (pegun)... ⏱️ 10s", "#333");
+            setTimeout(() => { setPos(rM, 150, 230); }, 1000); // Merah saja gerak
+            setTimeout(() => { updateStatus("MERAH MENANG! (Lawan pegun 10 saat)", "green"); }, 3000);
+        }
+
+        function menang3() {
+            resetArena(); updateStatus("Menang 3: B jatuh dengan menara A. M tolak menara C.", "#333");
+            setTimeout(() => { setPos(rB, 88, 130); }, 1000); // B pergi ke A
+            setTimeout(() => { setPos(rB, 88, -50); setPos(tK, 88, -20); }, 2500); // B dan menara A terkeluar
+            setTimeout(() => { setPos(rM, 388, 120); }, 4000); // M pergi ke C
+            setTimeout(() => { setPos(rM, 388, 40); setPos(tKn, 388, -20); }, 5500); // M tolak C keluar
+            setTimeout(() => { updateStatus("MERAH MENANG! (Berjaya habiskan sisa menara)", "green"); }, 7000);
+        }
+
+        function menang4() {
+            resetArena(); updateStatus("Menang 4: Menara jatuh serentak. Penentuan lawan robot.", "#333");
+            setTimeout(() => { setPos(rM, 388, 130); setPos(rB, 88, 130); }, 1000); // M ke C, B ke A
+            setTimeout(() => { setPos(tKn, 388, -20); setPos(tK, 88, -20); }, 2500); // Menara ditolak serentak
+            setTimeout(() => { setPos(rM, 230, 230); setPos(rB, 270, 230); }, 4000); // Robot kembali bertembung
+            setTimeout(() => { setPos(rM, 180, 230); setPos(rB, 550, 230); }, 5500); // M tolak B jauh keluar
+            setTimeout(() => { updateStatus("MERAH MENANG! (Berjaya tolak robot lawan)", "green"); }, 7000);
+        }
+
+        // ================= PERATURAN SERI =================
+        function seri1() {
+            resetArena(); updateStatus("Seri 1: Kedua-dua rosak/pegun... ⏱️ 10s", "orange");
+            setTimeout(() => { updateStatus("SERI! (Kedua-dua pegun 10 saat)", "red"); }, 3000);
+        }
+
+        function seri2() {
+            resetArena(); updateStatus("Seri 2: Bertembung teruk, kedua-dua terkeluar!", "orange");
+            setTimeout(() => { setPos(rM, 230, 230); setPos(rB, 270, 230); }, 1000); // Bertembung laju
+            setTimeout(() => { setPos(rM, -50, 230); setPos(rB, 550, 230); }, 2500); // Terpelanting keluar (menara kekal)
+            setTimeout(() => { updateStatus("SERI! (Robot jatuh, menara kekal)", "red"); }, 4000);
+        }
+
+        function seri3() {
+            resetArena(); updateStatus("Seri 3: Masa tamat ⏱️, tiada sesiapa terkeluar.", "orange");
+            setTimeout(() => { setPos(rM, 200, 150); setPos(rB, 300, 350); }, 1000); // Gerak sikit
+            setTimeout(() => { updateStatus("SERI! (Masa tamat, gelanggang masih ada robot & menara)", "red"); }, 3000);
+        }
+
+        function seri4() {
+            resetArena(); updateStatus("Seri 4: Pelanggaran Epik! Gelanggang terus kosong.", "orange");
+            setTimeout(() => { setPos(rM, 230, 100); setPos(rB, 270, 100); setPos(tK, 230, 100); setPos(tKn, 270, 100); }, 1000); // Kumpul tengah
+            setTimeout(() => { setPos(rM, -50, -50); setPos(rB, 550, -50); setPos(tK, -50, 550); setPos(tKn, 550, 550); }, 2500); // Semua terpelanting keluar
+            setTimeout(() => { updateStatus("SERI! (Gelanggang Kosong)", "red"); }, 4000);
+        }
+
+        function seri5() {
+            resetArena(); updateStatus("Seri 5: B jatuh bawa menara A. M rosak.", "orange");
+            setTimeout(() => { setPos(rB, 88, 130); }, 1000); // B ke A
+            setTimeout(() => { setPos(rB, 88, -50); setPos(tK, 88, -20); }, 2500); // B jatuh bawa menara A
+            setTimeout(() => { setPos(rM, 250, 230); }, 4000); // M gerak sikit nak ke C tapi...
+            setTimeout(() => { updateStatus("SERI! (Robot M rosak/masa tamat sblm jatuhkan menara C)", "red"); }, 5500);
+        }
+
+        // Initialize kedudukan asal bila web dibuka
+        window.onload = resetArena;
     </script>
 </body>
 </html>
