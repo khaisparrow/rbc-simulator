@@ -59,22 +59,28 @@
             body { 
                 flex-direction: column; 
                 padding: 10px; 
-                gap: 15px;
+                gap: 10px;
+                height: 100dvh; /* Mengunci ketinggian skrin telefon */
+                overflow: hidden; /* Mengelakkan seluruh paparan di-skrol */
             }
             .arena-wrapper { 
                 order: 1; 
                 width: 100%; 
+                flex-shrink: 0; /* Memastikan arena kekal di atas dan tak mengecut */
             }
             .controls { 
                 order: 2; 
                 width: 100%; 
+                flex: 1; /* Ruang selebihnya diambil oleh kotak kawalan */
+                overflow-y: auto; /* MENGAKTIFKAN SCROLLBAR PADA BUTANG SAHAJA */
                 max-height: none; 
                 box-sizing: border-box;
                 padding: 15px;
+                border: 2px solid #ddd;
             }
             #status-board { 
                 min-width: 100%; 
-                font-size: 16px; 
+                font-size: 15px; 
                 padding: 10px;
                 margin-bottom: 10px;
             }
@@ -100,6 +106,8 @@
             }
             #status-board {
                 font-size: 14px;
+                padding: 8px;
+                margin-bottom: 5px;
             }
         }
     </style>
