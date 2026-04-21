@@ -56,59 +56,17 @@
            KOD RESPONSIVE (UNTUK PAPARAN TELEFON & TABLET)
            ========================================================= */
         @media (max-width: 850px) {
-            body { 
-                flex-direction: column; 
-                padding: 10px; 
-                gap: 10px;
-                height: 100dvh; /* Mengunci ketinggian skrin telefon */
-                overflow: hidden; /* Mengelakkan seluruh paparan di-skrol */
-            }
-            .arena-wrapper { 
-                order: 1; 
-                width: 100%; 
-                flex-shrink: 0; /* Memastikan arena kekal di atas dan tak mengecut */
-            }
-            .controls { 
-                order: 2; 
-                width: 100%; 
-                flex: 1; /* Ruang selebihnya diambil oleh kotak kawalan */
-                overflow-y: auto; /* MENGAKTIFKAN SCROLLBAR PADA BUTANG SAHAJA */
-                max-height: none; 
-                box-sizing: border-box;
-                padding: 15px;
-                border: 2px solid #ddd;
-            }
-            #status-board { 
-                min-width: 100%; 
-                font-size: 15px; 
-                padding: 10px;
-                margin-bottom: 10px;
-            }
-            
-            /* Skalakan gelanggang mengecil supaya muat skrin phone */
-            .arena-scale-container {
-                transform: scale(0.65); 
-                transform-origin: top center;
-                height: 330px; 
-            }
-            
-            button { 
-                padding: 15px; 
-                font-size: 15px; 
-            }
+            body { flex-direction: column; padding: 10px; gap: 10px; height: 100dvh; overflow: hidden; }
+            .arena-wrapper { order: 1; width: 100%; flex-shrink: 0; }
+            .controls { order: 2; width: 100%; flex: 1; overflow-y: auto; max-height: none; box-sizing: border-box; padding: 15px; border: 2px solid #ddd; }
+            #status-board { min-width: 100%; font-size: 15px; padding: 10px; margin-bottom: 10px; }
+            .arena-scale-container { transform: scale(0.65); transform-origin: top center; height: 330px; }
+            button { padding: 15px; font-size: 15px; }
         }
 
-        /* Skrin Handphone yang lebih kecil */
         @media (max-width: 400px) {
-            .arena-scale-container {
-                transform: scale(0.55);
-                height: 280px;
-            }
-            #status-board {
-                font-size: 14px;
-                padding: 8px;
-                margin-bottom: 5px;
-            }
+            .arena-scale-container { transform: scale(0.55); height: 280px; }
+            #status-board { font-size: 14px; padding: 8px; margin-bottom: 5px; }
         }
     </style>
 </head>
@@ -119,7 +77,9 @@
         <button class="reset-btn" onclick="resetArena()">🔄 RESET GELANGGANG</button>
         
         <div class="section-title">Syarat MENANG</div>
-        <button onclick="menang1()">1. Robot keluar, lawan jatuhkan menara</button>
+        <button onclick="menang1a()">1a. Keluarkan robot lawan SAHAJA</button>
+        <button onclick="menang1b()">1b. Keluarkan menara lawan SAHAJA</button>
+        
         <button onclick="menang2()">2. Robot tidak bergerak selama 10s, lawan menang</button>
         <button onclick="menang3()">3. Jatuh bersama menara lawan, robot atas gelanggang keluarkan menara</button>
         <button onclick="menang4()">4. Jatuh menara serentak, robot tolak robot lawan</button>
@@ -186,13 +146,21 @@
         }
 
         // ================= PERATURAN MENANG =================
-        function menang1() {
-            resetArena(); updateStatus("Menang 1: M menolak B, kemudian jatuhkan menara C...", "#333");
+        
+        // Menang 1a: Hanya tolak robot lawan keluar
+        function menang1a() {
+            resetArena(); updateStatus("Menang 1a: M menolak B keluar gelanggang...", "#333");
             setTimeout(() => { setPos(rM, 230, 230); setPos(rB, 270, 230); }, 500); 
             setTimeout(() => { setPos(rM, 380, 230); setPos(rB, 520, 230); }, 2000); 
-            setTimeout(() => { setPos(rM, 388, 120); }, 3500); 
-            setTimeout(() => { setPos(rM, 388, 40); setPos(tKn, 388, -30); }, 5000); 
-            setTimeout(() => { updateStatus("MERAH MENANG! (Robot lawan keluar & menara jatuh)", "green"); }, 6500);
+            setTimeout(() => { updateStatus("MERAH MENANG! (Berjaya keluarkan robot lawan)", "green"); }, 3500);
+        }
+
+        // Menang 1b: Hanya tolak menara lawan keluar
+        function menang1b() {
+            resetArena(); updateStatus("Menang 1b: M terus menuju ke C dan jatuhkan menara lawan...", "#333");
+            setTimeout(() => { setPos(rM, 388, 120); }, 1000); 
+            setTimeout(() => { setPos(rM, 388, 40); setPos(tKn, 388, -30); }, 2500); 
+            setTimeout(() => { updateStatus("MERAH MENANG! (Berjaya keluarkan menara lawan)", "green"); }, 4000);
         }
 
         function menang2() {
