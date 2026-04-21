@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi Peraturan Robotik</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; gap: 20px; padding: 20px; background-color: #f4f4f9; }
+        .controls { width: 300px; display: flex; flex-direction: column; gap: 10px; }
+        button { padding: 15px; font-size: 16px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
+        button:hover { background-color: #0056b3; }
+        
+        /* Gelanggang */
+        .arena-container { position: relative; width: 400px; height: 400px; background-color: #333; border: 5px solid #000; border-radius: 50%; /* Anggap gelanggang bulat sbg contoh */ overflow: visible; display: flex; justify-content: center; align-items: center;}
+        .arena-border { width: 100%; height: 100%; border: 10px solid white; border-radius: 50%; box-sizing: border-box; }
+        
+        /* Robot & Menara */
+        .robot, .menara { position: absolute; width: 40px; height: 40px; transition: all 1.5s ease-in-out; /* Ini buat animasi nampak smooth */ display: flex; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 12px;}
+        #robotA { background-color: blue; top: 180px; left: 100px; }
+        #robotB { background-color: red; top: 180px; left: 260px; }
+        #menaraA { background-color: lightblue; top: 50px; left: 180px; border-radius: 50%; width: 30px; height:30px;}
+        #menaraB { background-color: pink; top: 320px; left: 180px; border-radius: 50%; width: 30px; height:30px;}
+        
+        #result-text { position: absolute; top: -50px; font-size: 24px; font-weight: bold; color: green; display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <h2>Peraturan RBC</h2>
+        <p>Pilih situasi untuk lihat simulasi:</p>
+        <button onclick="simulasiMenangTolak()">5.7.1 - Tolak Robot Keluar</button>
+        <button onclick="simulasiSeri()">5.8.1 - 10 Saat Tidak Bergerak</button>
+        <button onclick="resetArena()" style="background-color: gray;">Reset Gelanggang</button>
+    </div>
+
+    <div class="arena-container">
+        <div class="arena-border"></div>
+        <div id="result-text"></div>
+        <div id="robotA" class="robot">A</div>
+        <div id="robotB" class="robot">B</div>
+        <div id="menaraA" class="menara">MA</div>
+        <div id="menaraB" class="menara">MB</div>
+    </div>
+
+    <script>
+        const robotA = document.getElementById('robotA');
+        const robotB = document.getElementById('robotB');
+        const resultText = document.getElementById('result-text');
+
+        function resetArena() {
+            robotA.style.left = '100px'; robotA.style.top = '180px';
+            robotB.style.left = '260px'; robotB.style.top = '180px';
+            resultText.style.display = 'none';
+        }
+
+        function simulasiMenangTolak() {
+            resetArena();
+            // Animasi: Robot A bergerak ke arah Robot B, lalu tolak B keluar gelanggang
+            setTimeout(() => {
+                robotA.style.left = '250px'; // A maju
+                robotB.style.left = '450px'; // B tertolak keluar (melebihi 400px lebar arena)
+                
+                setTimeout(() => {
+                    resultText.innerHTML = "Robot A Menang! (Peraturan 5.7.1)";
+                    resultText.style.color = "blue";
+                    resultText.style.display = 'block';
+                }, 1500); // Tunjuk text lepas animasi tamat
+            }, 500);
+        }
+
+        function simulasiSeri() {
+            resetArena();
+            // Animasi: Tiada pergerakan, terus tunjuk masa tamat
+            resultText.innerHTML = "Masa Berjalan... 10s";
+            resultText.style.display = 'block';
+            resultText.style.color = "orange";
+            
+            setTimeout(() => {
+                resultText.innerHTML = "SERI! Kedua-dua robot pegun (Peraturan 5.8.1)";
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
