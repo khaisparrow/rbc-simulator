@@ -80,7 +80,8 @@
         <button onclick="menang1a()">1a. Keluarkan robot lawan SAHAJA</button>
         <button onclick="menang1b()">1b. Keluarkan menara lawan SAHAJA</button>
         
-        <button onclick="menang2()">2. Robot tidak bergerak selama 10s, lawan menang</button>
+        <button onclick="menang2()">2. Lawan pegun 10s, teruskan tolak kon/lawan untuk menang</button>
+        
         <button onclick="menang3()">3. Jatuh bersama menara lawan, robot atas gelanggang keluarkan menara</button>
         <button onclick="menang4()">4. Jatuh menara serentak, robot tolak robot lawan</button>
 
@@ -147,7 +148,6 @@
 
         // ================= PERATURAN MENANG =================
         
-        // Menang 1a: Hanya tolak robot lawan keluar
         function menang1a() {
             resetArena(); updateStatus("Menang 1a: M menolak B keluar gelanggang...", "#333");
             setTimeout(() => { setPos(rM, 230, 230); setPos(rB, 270, 230); }, 500); 
@@ -155,7 +155,6 @@
             setTimeout(() => { updateStatus("MERAH MENANG! (Berjaya keluarkan robot lawan)", "green"); }, 3500);
         }
 
-        // Menang 1b: Hanya tolak menara lawan keluar
         function menang1b() {
             resetArena(); updateStatus("Menang 1b: M terus menuju ke C dan jatuhkan menara lawan...", "#333");
             setTimeout(() => { setPos(rM, 388, 120); }, 1000); 
@@ -163,10 +162,13 @@
             setTimeout(() => { updateStatus("MERAH MENANG! (Berjaya keluarkan menara lawan)", "green"); }, 4000);
         }
 
+        // Menang 2 Dikemas Kini: B tak gerak, tapi M wajib tolak keluar B/Kon untuk menang
         function menang2() {
-            resetArena(); updateStatus("Menang 2: Robot Biru rosak (tidak bergerak)... ⏱️ 10s", "#333");
-            setTimeout(() => { setPos(rM, 150, 230); }, 1000); 
-            setTimeout(() => { updateStatus("MERAH MENANG! (Lawan pegun 10 saat)", "green"); }, 3000);
+            resetArena(); updateStatus("Menang 2: B pegun 10s. M teruskan misi tolak B keluar...", "#333");
+            setTimeout(() => { setPos(rM, 200, 230); }, 1000); // M mula bergerak ke arah B selepas 10s (simulasi)
+            setTimeout(() => { setPos(rM, 380, 230); setPos(rB, 430, 230); }, 2500); // M mula menolak B
+            setTimeout(() => { setPos(rM, 430, 230); setPos(rB, 550, 230); }, 4000); // B berjaya dikeluarkan
+            setTimeout(() => { updateStatus("MERAH MENANG! (Lawan pegun & berjaya dikeluarkan)", "green"); }, 5500);
         }
 
         function menang3() {
