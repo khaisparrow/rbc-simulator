@@ -47,10 +47,12 @@
         .robot { position: absolute; width: 40px; height: 40px; border-radius: 5px; box-shadow: inset 0 0 5px rgba(0,0,0,0.5), 0 3px 5px rgba(0,0,0,0.3); transition: all 1.2s ease-in-out; z-index: 10; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px; }
         .tower { position: absolute; width: 20px; height: 20px; border-radius: 50%; box-shadow: 0 3px 5px rgba(0,0,0,0.3); transition: all 1.2s ease-in-out; z-index: 9; border: 2px solid white; }
         
-        #robotMerah { background: linear-gradient(135deg, #ff4e50, #f9d423); }
+        /* KEMASKINI WARNA ROBOT MERAH - SEKARANG BETUL-BETUL MERAH PEKAT */
+        #robotMerah { background: #ff0000; } /* Warna Merah Solid */
+        
         #robotBiru { background: linear-gradient(135deg, #00c6ff, #0072ff); }
-        #towerKiri { background-color: #ff8c00; } 
-        #towerKanan { background-color: #800080; }
+        #towerKiri { background-color: #ff8c00; } /* Kon Oren */
+        #towerKanan { background-color: #800080; } /* Kon Ungu */
 
         /* =========================================================
            KOD RESPONSIVE (UNTUK PAPARAN TELEFON & TABLET)
@@ -79,9 +81,7 @@
         <div class="section-title">Syarat MENANG</div>
         <button onclick="menang1a()">1a. Keluarkan robot lawan SAHAJA</button>
         <button onclick="menang1b()">1b. Keluarkan menara lawan SAHAJA</button>
-        
         <button onclick="menang2()">2. Lawan pegun 10s, teruskan tolak kon/lawan untuk menang</button>
-        
         <button onclick="menang3()">3. Jatuh bersama menara lawan, robot atas gelanggang keluarkan menara</button>
         <button onclick="menang4()">4. Jatuh menara serentak, robot tolak robot lawan</button>
 
@@ -162,12 +162,11 @@
             setTimeout(() => { updateStatus("MERAH MENANG! (Berjaya keluarkan menara lawan)", "green"); }, 4000);
         }
 
-        // Menang 2 Dikemas Kini: B tak gerak, tapi M wajib tolak keluar B/Kon untuk menang
         function menang2() {
             resetArena(); updateStatus("Menang 2: B pegun 10s. M teruskan misi tolak B keluar...", "#333");
-            setTimeout(() => { setPos(rM, 200, 230); }, 1000); // M mula bergerak ke arah B selepas 10s (simulasi)
-            setTimeout(() => { setPos(rM, 380, 230); setPos(rB, 430, 230); }, 2500); // M mula menolak B
-            setTimeout(() => { setPos(rM, 430, 230); setPos(rB, 550, 230); }, 4000); // B berjaya dikeluarkan
+            setTimeout(() => { setPos(rM, 200, 230); }, 1000); 
+            setTimeout(() => { setPos(rM, 380, 230); setPos(rB, 430, 230); }, 2500); 
+            setTimeout(() => { setPos(rM, 430, 230); setPos(rB, 550, 230); }, 4000); 
             setTimeout(() => { updateStatus("MERAH MENANG! (Lawan pegun & berjaya dikeluarkan)", "green"); }, 5500);
         }
 
